@@ -1,3 +1,10 @@
+use dotenv::dotenv;
+use std::env;
+
 fn main() {
-    println!("Hello, world!");
+    dotenv().ok();
+    println!(
+        "TWITTER_BEARER_TOKEN: {}",
+        env::var("TWITTER_BEARER_TOKEN").expect("TWITTER_BEARER_TOKEN must be set")
+    );
 }

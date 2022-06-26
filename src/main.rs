@@ -1,3 +1,4 @@
+use csv::Writer;
 use dotenv::dotenv;
 use std::env;
 use twitter_v2::{authorization::BearerToken, TwitterApi};
@@ -13,8 +14,11 @@ async fn main() {
         .send()
         .await
         .expect("there was something wrong");
-    println!("data: {:?}", res.data);
-    println!("meta: {:?}", res.meta);
-    println!("includes: {:?}", res.includes);
-    println!("errors: {:?}", res.errors);
+    let mut csv = Writer::from_path("hoge.csv").expect("could'nt set up csv writer");
+    if let Some(data) = res.into_data() {
+        csv.write_record(["tweet_id", "contents"]).expect("couldn't write to csv");
+        for tweet in &data {
+            csv.write_record([tweet.id.to_string(), tweet.text.clone()]).expect("couldn't write to csv");
+        }
+    }
 }
